@@ -259,8 +259,6 @@ impl<T> Index<usize> for Vector<T> {
 }
 
 impl<T> IndexMut<usize> for Vector<T> {
-    type Output = T;
-
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         let data_index = self.indices[index];
         &mut self.data[data_index]
