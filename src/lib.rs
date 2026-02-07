@@ -8,7 +8,7 @@ pub use crate::vector::*;
 
 /// Alias to differentiate betweens IDs and index.
 /// An ID allows to access the data through the index vector and is associated
-/// with the same object until it is erased An index is simply the current
+/// with the same object until it is erased. An index is simply the current
 /// position of the object in the data vector and may change with deletions.
 pub type ID = usize;
 
