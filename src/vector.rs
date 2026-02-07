@@ -75,7 +75,7 @@ impl<T> Vector<T> {
 
     /// Tells if the vector is currently empty
     #[must_use]
-    pub fn empty(&self) -> bool {
+    pub fn is_empty(&self) -> bool {
         self.data.is_empty()
     }
 
@@ -395,7 +395,7 @@ mod tests {
 
         vec.clear();
 
-        assert!(vec.empty());
+        assert!(vec.is_empty());
         assert_eq!(vec.get(&handle), None);
     }
 
@@ -453,7 +453,7 @@ mod tests {
 
         vec.clear();
 
-        assert!(vec.empty());
+        assert!(vec.is_empty());
         assert_eq!(vec.get(&handle), None);
     }
 
