@@ -223,7 +223,7 @@ impl<T> Vector<T> {
     /// be created.
     /// @return The ID of the newly created slot.
     fn get_free_slot(&mut self) -> ID {
-        let id: ID = self.get_free_id();
+        let id = self.get_free_id();
         self.indices[id] = self.data.len();
         id
     }
@@ -241,7 +241,7 @@ impl<T> Vector<T> {
             return self.metadata[self.data.len()].reverse_id;
         }
         // A new slot has to be created
-        let new_id: ID = self.data.len();
+        let new_id = self.data.len();
         self.metadata.push(Metadata::new(new_id, 0));
         self.indices.push(new_id);
         new_id
