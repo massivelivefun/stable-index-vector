@@ -156,9 +156,14 @@ impl<T> Vector<T> {
         self.metadata[self.indices[id]].validity_id
     }
 
-    /// Returns a raw pointer to the first element of the data vector
+    /// Returns an optional to the first element of the data vector
     pub fn first(&self) -> Option<&T> {
         self.data.first()
+    }
+
+    /// Consumes the Vector to return the underlying data
+    pub fn data(self) -> Vec<T> {
+        self.data
     }
 
     /// Returns a constant reference to the data vector
