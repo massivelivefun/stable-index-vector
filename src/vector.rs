@@ -1,5 +1,6 @@
 use crate::{ID, handle::Handle, metadata::Metadata};
 use std::marker::PhantomData;
+use std::ops::{Index, IndexMut};
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Vector<T> {
@@ -160,14 +161,14 @@ impl<T> Vector<T> {
         self.data.first()
     }
 
-    /// Return a reference to the data vector
-    pub fn get_data_mut(&mut self) -> &mut Vec<T> {
-        &mut self.data
-    }
-
     /// Returns a constant reference to the data vector
     pub fn get_data(&self) -> &Vec<T> {
         &self.data
+    }
+
+    /// Return a reference to the data vector
+    pub fn get_data_mut(&mut self) -> &mut Vec<T> {
+        &mut self.data
     }
 
     /// Returns the ID that would be used if an object was added
@@ -245,6 +246,24 @@ impl<T> Vector<T> {
         self.metadata.push(Metadata::new(new_id, 0));
         self.indices.push(new_id);
         new_id
+    }
+}
+
+impl<T> Index<usize> for Vector<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        let data_index = self.indices[index];
+        &self.data[data_index]
+    }
+}
+
+impl<T> IndexMut<usize> for Vector<T> {
+    type Output = T;
+
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        let data_index = self.indices[index];
+        &mut self.data[data_index]
     }
 }
 
