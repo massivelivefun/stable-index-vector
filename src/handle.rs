@@ -1,27 +1,27 @@
-use crate::ID;
+use crate::index_type::IndexType;
 use std::marker::PhantomData;
 
 #[derive(Debug, PartialEq, Eq, Hash)]
-pub struct Handle<T> {
+pub struct Handle<T, I: IndexType = u32> {
     /// The ID of the object.
-    pub id: ID,
+    pub id: I,
     /// The validity ID of the object at the time of creation. Used to check
     /// the validity of the handle.
-    pub validity_id: ID,
+    pub validity_id: I,
     /// Prevent type collisions so not just any type of Handle can be passed
     /// into any type of Vector.
     pub _marker: PhantomData<T>,
 }
 
-impl<T> Copy for Handle<T> {}
+impl<T, I: IndexType> Copy for Handle<T, I> {}
 
-impl<T> Clone for Handle<T> {
+impl<T, I: IndexType> Clone for Handle<T, I> {
     fn clone(&self) -> Self { *self }
 }
 
-impl<T> Handle<T> {
-    /// Factory constructor
-    pub fn new(id: ID, validity_id: ID) -> Self {
+impl<T, I: IndexType> Handle<T, I> {
+    /// Creates a new handle using the default `u32` index type.
+    pub fn new(id: I, validity_id: I) -> Self {
         Self {
             id,
             validity_id,
@@ -29,19 +29,25 @@ impl<T> Handle<T> {
         }
     }
 
-    /// Returns the ID of the associated object
+    /// Returns the ID of the associated object the Handle represents.
     #[must_use]
-    pub fn get_id(&self) -> usize {
+    pub fn get_id(&self) -> I {
         self.id
+    }
+
+    /// Returns the validity ID of the associated object the Handle represents. 
+    #[must_use]
+    pub fn get_validity_id(&self) -> I {
+        self.validity_id
     }
 }
 
 // Default factory constructor
-impl<T> Default for Handle<T> {
+impl<T, I: IndexType> Default for Handle<T, I> {
     fn default() -> Self {
-        Self {   
-            id: 0,
-            validity_id: 0,
+        Self {
+            id: I::zero(),
+            validity_id: I::zero(),
             _marker: PhantomData,
         }
     }
@@ -50,6 +56,7 @@ impl<T> Default for Handle<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::mem::size_of;
 
     #[test]
     fn test_handle_creation() {
@@ -104,5 +111,20 @@ mod tests {
         
         assert!(set.contains(&Handle::new(1, 1)));
         assert!(!set.contains(&Handle::new(1, 2)));
+    }
+
+    #[test]
+    fn test_handle_layout_sizes() {
+        // Handle<T, u8> -> 1 byte ID + 1 byte validity = 2 bytes
+        assert_eq!(size_of::<Handle<i32, u8>>(), 2);
+        
+        // Handle<T, u16> -> 2 byte ID + 2 byte validity = 4 bytes
+        assert_eq!(size_of::<Handle<i32, u16>>(), 4);
+        
+        // Handle<T, u32> -> 4 byte ID + 4 byte validity = 8 bytes
+        assert_eq!(size_of::<Handle<i32, u32>>(), 8);
+        
+        // Handle<T, u64> -> 8 byte ID + 8 byte validity = 16 bytes
+        assert_eq!(size_of::<Handle<i32, u64>>(), 16);
     }
 }

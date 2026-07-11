@@ -1,33 +1,27 @@
-use crate::ID;
+use crate::index_type::IndexType;
 
 /// The struct holding additional information about an object.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct Metadata {
+pub struct Metadata<I: IndexType> {
     /// The reverse ID, allowing the retrieve the ID of the object from the
     /// data vector.
-    pub reverse_id: ID,
+    pub reverse_id: I,
     /// An identifier that is changed when the object is erased, used to
     /// ensure a handle is still valid.
-    pub validity_id: ID,
+    pub validity_id: I,
 }
 
-impl Metadata {
+impl<I: IndexType> Metadata<I> {
     // Factory constructor
-    pub fn new(reverse_id: ID, validity_id: ID) -> Self {
-        Self {
-            reverse_id,
-            validity_id,
-        }
+    pub fn new(reverse_id: I, validity_id: I) -> Self {
+        Self { reverse_id, validity_id }
     }
 }
 
 /// Default constructor
-impl Default for Metadata {
+impl<I: IndexType> Default for Metadata<I> {
     fn default() -> Self {
-        Self {
-            reverse_id: 0,
-            validity_id: 0,
-        }
+        Self { reverse_id: I::zero(), validity_id: I::zero() }
     }
 }
 
@@ -37,7 +31,7 @@ mod tests {
 
     #[test]
     fn test_metadata_creation() {
-        let meta = Metadata::new(42, 999);
+        let meta = Metadata::new(42u32, 999u32);
         
         assert_eq!(meta.reverse_id, 42);
         assert_eq!(meta.validity_id, 999);
@@ -45,7 +39,7 @@ mod tests {
 
     #[test]
     fn test_metadata_default() {
-        let meta = Metadata::default();
+        let meta = Metadata::<u32>::default();
         
         assert_eq!(meta.reverse_id, 0);
         assert_eq!(meta.validity_id, 0);
@@ -53,7 +47,7 @@ mod tests {
 
     #[test]
     fn test_metadata_traits() {
-        let m1 = Metadata::new(1, 1);
+        let m1 = Metadata::new(1u32, 1u32);
         
         let m2 = m1; 
         assert_eq!(m1.reverse_id, m2.reverse_id);
