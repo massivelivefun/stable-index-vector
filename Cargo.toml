@@ -2,5 +2,8 @@
 name = "stable-index-vector"
 version = "0.1.0"
 edition = "2024"
+description = "A stable index vector using swap-and-pop and generation counters for safe ID-based data access."
+license = "MIT"
+repository = "https://github.com/massivelivefun/stable-index-vector"
 
 [dependencies]
